@@ -4,7 +4,7 @@ import Layout from "../components/Layout";
 const Home: React.FC = () => {
     return (
         <Layout>
-            <p>I'm in a layout!</p>
+            <p>I am in a layout!</p>
         </Layout>
     );
 };
