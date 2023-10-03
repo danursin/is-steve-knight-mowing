@@ -13,7 +13,6 @@ export interface MowEvent extends DynamoDbItem {
     SK: string;
     Type: MowEventType;
     timestamp: string;
-    ip: string;
-    geolocation: GeolocationCoordinates;
+    geolocation: Partial<GeolocationCoordinates>;
     note?: string;
 }

@@ -36,13 +36,12 @@ export const getMostRecentMow = async (): Promise<MowEvent | undefined> => {
     return Items?.[0] as MowEvent
 };
 
-export const createMow = async ({ip, geolocation, note }: {ip: string; geolocation: GeolocationCoordinates; note?: string | undefined}): Promise<MowEvent> => {
+export const createMow = async ({geolocation, note }: { geolocation: Partial<GeolocationCoordinates>; note?: string | undefined}): Promise<MowEvent> => {
     const item: MowEvent = {
         PK: "EVENT#MOW",
         SK: new Date().toISOString(),
         timestamp: new Date().toISOString(),
         Type: "MOW",
-        ip,
         geolocation,
         note
     };
