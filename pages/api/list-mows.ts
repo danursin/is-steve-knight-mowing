@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { MowEvent } from "@/app/types";
-import { getMows } from "@/app/services/mowService";
+import { MowEvent } from "@/pages/types";
+import { getMows } from "@/pages/services/mowService";
 
 type ListMowsQueryParams = {
     start_date: string;

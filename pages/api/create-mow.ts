@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { MowEvent } from "@/app/types";
-import { createMow } from "@/app/services/mowService";
+import { MowEvent } from "@/pages/types";
+import { createMow } from "@/pages/services/mowService";
 
 type CreateMowBody = {
    ip: string;
@@ -10,7 +10,8 @@ type CreateMowBody = {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<MowEvent>) {
-    const { ip, geolocation, note } = req.body as CreateMowBody;
+    const { geolocation, note } = req.body as CreateMowBody;
+    const ip = req.ip
     const newMow = await createMow({ ip, geolocation, note })
     res.json(newMow);
 }
