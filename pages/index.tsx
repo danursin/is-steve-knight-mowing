@@ -7,14 +7,14 @@ import { getMostRecentMow, getMows } from "../services/mowService";
 import { useCallback, useState } from "react";
 
 import Layout from "../components/Layout";
+import MowChart from "../components/MowChart";
 import { MowEvent } from "../types";
 
 interface HomeProps {
     mostRecentMow?: MowEvent | undefined;
-    mowList: MowEvent[];
 }
 
-const Home: React.FC<HomeProps> = ({ mostRecentMow, mowList }) => {
+const Home: React.FC<HomeProps> = ({ mostRecentMow }) => {
     const [note, setNote] = useState<string>();
     const [loading, setLoading] = useState<boolean>(false);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -64,7 +64,7 @@ const Home: React.FC<HomeProps> = ({ mostRecentMow, mowList }) => {
         <Layout>
             <ToastContainer theme="colored" />
 
-            <Grid textAlign="center">
+            <Grid textAlign="center" columns={1}>
                 <Grid.Column>
                     {mostRecentMow && (
                         <Statistic color="green">
@@ -74,28 +74,33 @@ const Home: React.FC<HomeProps> = ({ mostRecentMow, mowList }) => {
                     )}
                     {!mostRecentMow && <Header content="Um, there are no recorded mow events. That doesn't make any sense" color="red" />}
                 </Grid.Column>
+                <Grid.Column>
+                    <Segment>
+                        <p>Steve Knight seems to mow his grass a lot. Like a lot a lot. </p>
+                        <p>
+                            Sometimes it appears that he mows multiple separate times in a single day and very frequently several times in
+                            the same week.
+                        </p>
+                        <p>
+                            This application helps to answer the question of when he last mowed and whether Steve Knight is currently mowing
+                            the grass. He likely is.
+                        </p>
+                    </Segment>
+                </Grid.Column>
+                <Grid.Column>
+                    <MowChart />
+                </Grid.Column>
+                <Grid.Column>
+                    <Button
+                        color="black"
+                        icon="calendar"
+                        type="button"
+                        content="Report a mowing event"
+                        fluid
+                        onClick={() => setIsModalOpen(true)}
+                    />
+                </Grid.Column>
             </Grid>
-
-            <Segment>
-                <p>Steve Knight seems to mow his grass a lot. Like a lot a lot. </p>
-                <p>
-                    Sometimes it appears that he mows multiple separate times in a single day and very frequently several times in the same
-                    week.
-                </p>
-                <p>
-                    This application helps to answer the question of when he last mowed and whether Steve Knight is currently mowing the
-                    grass. He likely is.
-                </p>
-            </Segment>
-
-            <Button
-                color="black"
-                icon="calendar"
-                type="button"
-                content="Report a mowing event"
-                fluid
-                onClick={() => setIsModalOpen(true)}
-            />
 
             <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)} closeIcon>
                 <Modal.Header content="Report a mowing event" />
@@ -122,17 +127,10 @@ const Home: React.FC<HomeProps> = ({ mostRecentMow, mowList }) => {
 export default Home;
 
 export const getStaticProps: GetStaticProps<HomeProps> = async (): Promise<GetStaticPropsResult<HomeProps>> => {
-    const today = new Date();
-    const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-    const [mostRecentMow, mowList] = await Promise.all([
-        getMostRecentMow(),
-        getMows({ start_date: thirtyDaysAgo.toISOString(), end_date: today.toISOString() })
-    ]);
-
+    const mostRecentMow = await getMostRecentMow();
     return {
         props: {
-            mostRecentMow,
-            mowList
+            mostRecentMow
         }
     };
 };

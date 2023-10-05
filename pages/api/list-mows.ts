@@ -8,8 +8,13 @@ type ListMowsQueryParams = {
     end_date: string
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<MowEvent[]>) {
-    const { start_date, end_date } = req.query as ListMowsQueryParams;
-    const mows = await getMows({ start_date, end_date })
-    res.json(mows);
+export default async function handler(req: NextApiRequest, res: NextApiResponse<MowEvent[] | string>) {
+    try {
+        const { start_date, end_date } = req.query as ListMowsQueryParams;
+        const mows = await getMows({ start_date, end_date })
+        res.json(mows);
+    } catch(err){
+        res.status(500).send((err as Error).message);
+    }
+    
 }
