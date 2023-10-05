@@ -115,7 +115,10 @@ const MowChart: React.FC = () => {
                     },
                     color: "green"
                 }
-            ]
+            ],
+            credits: {
+                enabled: false
+            }
         };
         setChartProps(options);
     }, [endDate, mows, startDate]);
