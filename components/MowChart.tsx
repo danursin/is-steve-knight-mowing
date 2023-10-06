@@ -130,14 +130,23 @@ const MowChart: React.FC = () => {
                 content={
                     <>
                         Mow Counts from
-                        <Input
+                        <Form.Input
                             type="date"
+                            fluid
                             value={startDate}
                             size="mini"
                             max={endDate}
                             onChange={(e, { value }) => setStartDate(value)}
                         />{" "}
-                        to <Input type="date" value={endDate} size="mini" min={startDate} onChange={(e, { value }) => setEndDate(value)} />
+                        to{" "}
+                        <Form.Input
+                            type="date"
+                            value={endDate}
+                            size="mini"
+                            fluid
+                            min={startDate}
+                            onChange={(e, { value }) => setEndDate(value)}
+                        />
                     </>
                 }
             />

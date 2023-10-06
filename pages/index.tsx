@@ -7,119 +7,36 @@ import { getMostRecentMow, getMows } from "../services/mowService";
 import { useCallback, useState } from "react";
 
 import Layout from "../components/Layout";
+import MostRecentMow from "../components/MostRecentMow";
 import MowChart from "../components/MowChart";
 import { MowEvent } from "../types";
+import SteveKnightExplanation from "../components/SteveKnightExplanation";
+import SubmitMowEvent from "../components/SubmitMowEvent";
 
 interface HomeProps {
     mostRecentMow?: MowEvent | undefined;
 }
 
-const Home: React.FC<HomeProps> = ({ mostRecentMow }) => {
-    const [note, setNote] = useState<string>();
-    const [loading, setLoading] = useState<boolean>(false);
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-    const handleOnSubmit = useCallback(async () => {
-        try {
-            setLoading(true);
-
-            const position = await new Promise<GeolocationPosition>((response, reject) => {
-                navigator.geolocation.getCurrentPosition(response, reject, {
-                    timeout: 5000,
-                    enableHighAccuracy: true,
-                    maximumAge: 0
-                });
-            });
-
-            const { accuracy, latitude, longitude } = position.coords;
-
-            const item: Partial<MowEvent> = {
-                geolocation: { accuracy, latitude, longitude },
-                note: note || undefined
-            };
-
-            const response = await fetch("/api/create-mow", {
-                method: "POST",
-                body: JSON.stringify(item),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(await response.text());
-            }
-
-            toast.success("Steve Knight mowing event recorded successfully!");
-            setNote(undefined);
-            setIsModalOpen(false);
-        } catch (err) {
-            toast.error((err as Error).message);
-        } finally {
-            setLoading(false);
-        }
-    }, [note]);
-
+const Home: React.FC<HomeProps> = ({ mostRecentMow: initalMostRecentMow }) => {
+    const [mostRecentMow, setMosetRecentMow] = useState<MowEvent | undefined>(initalMostRecentMow);
     return (
         <Layout>
             <ToastContainer theme="colored" />
 
             <Grid textAlign="center" columns={1}>
                 <Grid.Column>
-                    {mostRecentMow && (
-                        <Statistic color="green">
-                            <Statistic.Value>{new Date(mostRecentMow.timestamp).toLocaleString()}</Statistic.Value>
-                            <Statistic.Label content="Last Reported Mow" />
-                        </Statistic>
-                    )}
-                    {!mostRecentMow && <Header content="Um, there are no recorded mow events. That doesn't make any sense" color="red" />}
+                    <MostRecentMow mow={mostRecentMow} />
                 </Grid.Column>
                 <Grid.Column>
-                    <Segment>
-                        <p>Steve Knight seems to mow his grass a lot. Like a lot a lot. </p>
-                        <p>
-                            Sometimes it appears that he mows multiple separate times in a single day and very frequently several times in
-                            the same week.
-                        </p>
-                        <p>
-                            This application helps to answer the question of when he last mowed and whether Steve Knight is currently mowing
-                            the grass. He likely is.
-                        </p>
-                    </Segment>
+                    <SteveKnightExplanation />
                 </Grid.Column>
                 <Grid.Column>
                     <MowChart />
                 </Grid.Column>
                 <Grid.Column>
-                    <Button
-                        color="black"
-                        icon="calendar"
-                        type="button"
-                        content="Report a mowing event"
-                        fluid
-                        onClick={() => setIsModalOpen(true)}
-                    />
+                    <SubmitMowEvent onSave={setMosetRecentMow} />
                 </Grid.Column>
             </Grid>
-
-            <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)} closeIcon>
-                <Modal.Header content="Report a mowing event" />
-                <Modal.Content>
-                    <Form onSubmit={handleOnSubmit} loading={loading}>
-                        <p>
-                            To report a Steve Knight mowing event, you must have actually seen him mowing at his house. Remote reports are
-                            not accepted.
-                        </p>
-                        <Form.TextArea
-                            rows={3}
-                            value={note || ""}
-                            onChange={(e, { value }) => setNote(value as string)}
-                            placeholder="Is he mowing? Again? Tell me about it..."
-                        />
-                        <Form.Button fluid icon="cut" type="submit" content="Steve is Mowing Now!" color="green" basic />
-                    </Form>
-                </Modal.Content>
-            </Modal>
         </Layout>
     );
 };
