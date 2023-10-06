@@ -12,10 +12,10 @@ const MostRecentMow: React.FC<MostRecentMowProps> = ({ mow }) => {
     const [message, setMessage] = useState<string>("");
 
     useEffect(() => {
-        if (!mow) {
-            return;
-        }
-        const interval = setInterval(() => {
+        function assembleMessage() {
+            if (!mow) {
+                return;
+            }
             const mowDate = new Date(mow.timestamp);
             const now = new Date();
             const msSinceLastMow = +now - +mowDate;
@@ -36,7 +36,14 @@ const MostRecentMow: React.FC<MostRecentMowProps> = ({ mow }) => {
             seconds && segments.push(`${seconds} seconds`);
 
             setMessage(segments.join(", "));
+        }
+
+        const interval = setInterval(() => {
+            assembleMessage();
         }, 1000);
+
+        assembleMessage();
+
         return () => {
             clearInterval(interval);
         };
