@@ -16,6 +16,20 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
     useEffect(() => {
         const { dayOfWeekRaw, dayOfMonthRaw } = globalStatistics;
 
+        let maxDayOfWeek = 0;
+        for (const val of dayOfWeekRaw) {
+            if (val > maxDayOfWeek) {
+                maxDayOfWeek = val;
+            }
+        }
+
+        let maxDayOfMonth = 0;
+        for (const val of dayOfMonthRaw) {
+            if (val > maxDayOfMonth) {
+                maxDayOfMonth = val;
+            }
+        }
+
         const dayOfWeekOptions: Highcharts.Options = {
             chart: {
                 type: "column"
@@ -33,7 +47,8 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
                 title: {
                     text: "Count"
                 },
-                tickInterval: 1
+                tickInterval: 1,
+                max: maxDayOfWeek
             },
             plotOptions: {
                 series: {
@@ -80,7 +95,8 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
                 title: {
                     text: "Count"
                 },
-                tickInterval: 1
+                tickInterval: 1,
+                max: maxDayOfMonth
             },
             plotOptions: {
                 series: {
