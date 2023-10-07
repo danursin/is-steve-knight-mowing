@@ -1,11 +1,11 @@
 import { Button, Form, Modal } from "semantic-ui-react";
+import { GlobalStatistics, MowEvent } from "../types";
 import React, { useCallback, useState } from "react";
 
-import { MowEvent } from "../types";
 import { toast } from "react-toastify";
 
 interface SubmitMowEventProps {
-    onSave: (mow: MowEvent) => void;
+    onSave: (result: { mow: MowEvent; globalStatistics: GlobalStatistics }) => void;
 }
 
 const SubmitMowEvent: React.FC<SubmitMowEventProps> = ({ onSave }) => {
@@ -43,13 +43,13 @@ const SubmitMowEvent: React.FC<SubmitMowEventProps> = ({ onSave }) => {
                 throw new Error(await response.text());
             }
 
-            const mow = (await response.json()) as MowEvent;
+            const result = await response.json();
 
             toast.success("Steve Knight mowing event recorded successfully!");
             setNote(undefined);
             setIsModalOpen(false);
 
-            onSave(mow);
+            onSave(result);
         } catch (err) {
             toast.error((err as Error).message);
         } finally {

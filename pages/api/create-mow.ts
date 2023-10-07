@@ -1,7 +1,6 @@
+import { GlobalStatistics, MowEvent } from "../../types";
 import { NextApiRequest, NextApiResponse } from "next";
 import { calculateDistanceInMiles, calculateMinutesBetweenDates, createMow, getMostRecentMow } from "../../services/mowService";
-
-import { MowEvent } from "../../types";
 
 type CreateMowBody = {
    ip: string;
@@ -9,7 +8,7 @@ type CreateMowBody = {
    note?: string | undefined
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<MowEvent | string>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<{ mow: MowEvent; globalStatistics: GlobalStatistics } | string>) {
     try {
         const mostRecentMow = await getMostRecentMow();
         if(mostRecentMow){
@@ -43,8 +42,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             return;
         }
     
-        const newMow = await createMow({ geolocation, note })
-        res.json(newMow);
+        const result = await createMow({ geolocation, note })
+        res.json(result);
     } catch(err){   
         res.status(500).send((err as Error).message);
     }

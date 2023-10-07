@@ -54,7 +54,7 @@ const MostRecentMow: React.FC<MostRecentMowProps> = ({ mow }) => {
     }
 
     return (
-        <Statistic color="green">
+        <Statistic color="green" size="small">
             <Statistic.Value>{message}</Statistic.Value>
             <Statistic.Label content="Last Reported Mow" />
         </Statistic>
