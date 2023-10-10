@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         if(mostRecentMow){
             const now = new Date();
             const mostRecentDate = new Date(mostRecentMow.timestamp);
-            if(calculateMinutesBetweenDates(mostRecentDate, now)){
+            if(calculateMinutesBetweenDates(mostRecentDate, now) < 15){
                 res.status(429).send("A mow event was recorded less than 15 minutes ago. Give it a few minutes and try again.");
                 return;
             }
