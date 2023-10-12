@@ -1,9 +1,9 @@
+import { Header, Segment } from "semantic-ui-react";
 import React, { useEffect, useState } from "react";
 
 import { GlobalStatistics } from "../types";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { Segment } from "semantic-ui-react";
 
 interface MowChartProps {
     globalStatistics: GlobalStatistics;
@@ -32,11 +32,13 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
 
         const dayOfWeekOptions: Highcharts.Options = {
             chart: {
-                type: "column"
+                type: "column",
+                height: "200px"
             },
             title: {
                 text: undefined
             },
+            legend: { enabled: false },
             xAxis: {
                 categories: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
                 title: {
@@ -50,25 +52,11 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
                 tickInterval: 1,
                 max: maxDayOfWeek
             },
-            plotOptions: {
-                series: {
-                    events: {
-                        legendItemClick: () => false // Prevent clicking on the series name from hiding the series
-                    }
-                }
-            },
             series: [
                 {
                     name: "Observed Mow Count",
                     type: "column",
                     data: dayOfWeekRaw, // Counts on the y-axis
-                    dataLabels: {
-                        enabled: true,
-                        format: "{point.y}", // Show the count value on top of each column
-                        style: {
-                            fontWeight: "bold"
-                        }
-                    },
                     color: "green"
                 }
             ],
@@ -80,8 +68,10 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
 
         const dayOfMonthOptions: Highcharts.Options = {
             chart: {
-                type: "column"
+                type: "column",
+                height: "200px"
             },
+            legend: { enabled: false },
             title: {
                 text: undefined
             },
@@ -98,25 +88,11 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
                 tickInterval: 1,
                 max: maxDayOfMonth
             },
-            plotOptions: {
-                series: {
-                    events: {
-                        legendItemClick: () => false // Prevent clicking on the series name from hiding the series
-                    }
-                }
-            },
             series: [
                 {
                     name: "Observed Mow Count",
                     type: "column",
                     data: dayOfMonthRaw, // Counts on the y-axis
-                    dataLabels: {
-                        enabled: true,
-                        format: "{point.y}", // Show the count value on top of each column
-                        style: {
-                            fontWeight: "bold"
-                        }
-                    },
                     color: "green"
                 }
             ],
@@ -129,6 +105,7 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
 
     return (
         <Segment>
+            <Header content={`${globalStatistics.total} mows recorded all-time`} />
             <HighchartsReact highcharts={Highcharts} options={dayOfWeekChartProps} />
             <HighchartsReact highcharts={Highcharts} options={dayOfMonthChartProps} />
         </Segment>

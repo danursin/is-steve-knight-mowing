@@ -28,12 +28,12 @@ const MostRecentMow: React.FC<MostRecentMowProps> = ({ mow }) => {
             const seconds = Math.floor((msSinceLastMow % (60 * 1000)) / 1000);
 
             const segments = [];
-            years && segments.push(`${years} years`);
-            weeks && segments.push(`${weeks} weeks`);
-            days && segments.push(`${days} days`);
-            hours && segments.push(`${hours} hours`);
-            minutes && segments.push(`${minutes} minutes`);
-            seconds && segments.push(`${seconds} seconds`);
+            years && segments.push(`${years} year${years > 1 ? "s" : ""}`);
+            weeks && segments.push(`${weeks} week${weeks > 1 ? "s" : ""}`);
+            days && segments.push(`${days} day${days > 1 ? "s" : ""}`);
+            hours && segments.push(`${hours} hour${hours > 1 ? "s" : ""}`);
+            minutes && segments.push(`${minutes} minute${minutes > 1 ? "s" : ""}`);
+            seconds && segments.push(`${seconds} second${seconds > 1 ? "s" : ""}`);
 
             setMessage(segments.join(", "));
         }
@@ -56,7 +56,7 @@ const MostRecentMow: React.FC<MostRecentMowProps> = ({ mow }) => {
     return (
         <Statistic color="green" size="small">
             <Statistic.Value>{message}</Statistic.Value>
-            <Statistic.Label content="Last Reported Mow" />
+            <Statistic.Label content={`Last Reported Mow ${new Date(mow.timestamp).toLocaleString()}`} />
         </Statistic>
     );
 };
