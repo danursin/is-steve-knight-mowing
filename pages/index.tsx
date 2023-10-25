@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import MostRecentMow from "../components/MostRecentMow";
 import MowChart from "../components/MowChart";
+import SimpleLoader from "../components/SimpleLoader";
 import SteveKnightExplanation from "../components/SteveKnightExplanation";
 import SubmitMowEvent from "../components/SubmitMowEvent";
 
@@ -52,24 +53,15 @@ const Home: React.FC = () => {
         })();
     }, [getGlobalStatistics, getMostRecentMow]);
 
-    if (!mostRecentMow || !globalStatistics) {
-        return <Header icon={<Icon loading name="cog" />} content="Loading mow content" color="grey" />;
-    }
-
     return (
         <Layout>
             <ToastContainer theme="colored" />
-
             <Grid textAlign="center" columns={1}>
-                <Grid.Column>
-                    <MostRecentMow mow={mostRecentMow} />
-                </Grid.Column>
+                <Grid.Column>{mostRecentMow ? <MostRecentMow mow={mostRecentMow} /> : <SimpleLoader />}</Grid.Column>
                 <Grid.Column>
                     <SteveKnightExplanation />
                 </Grid.Column>
-                <Grid.Column>
-                    <MowChart globalStatistics={globalStatistics} />
-                </Grid.Column>
+                <Grid.Column>{globalStatistics ? <MowChart globalStatistics={globalStatistics} /> : <SimpleLoader />}</Grid.Column>
                 <Grid.Column>
                     <SubmitMowEvent onSave={handleOnSave} />
                 </Grid.Column>

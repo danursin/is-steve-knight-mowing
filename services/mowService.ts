@@ -47,7 +47,7 @@ export const getGlobalStatistics = async (): Promise<GlobalStatistics> => {
 };
 
 export const createMow = async ({geolocation, note }: { geolocation: Partial<GeolocationCoordinates>; note?: string | undefined}): Promise<{ mow: MowEvent; globalStatistics: GlobalStatistics }> => {
-    const item: MowEvent = {
+    const mow: MowEvent = {
         PK: "EVENT#MOW",
         SK: new Date().toISOString(),
         timestamp: new Date().toISOString(),
@@ -55,17 +55,30 @@ export const createMow = async ({geolocation, note }: { geolocation: Partial<Geo
         geolocation,
         note
     };
-    await dynamodb.send(new PutCommand({
-        TableName: TABLE_NAME,
-        Item: item
-    }));
 
-    const updatedGlobalStatistics = await updateGlobalStatistics(item);
+    const globalStatistics = await getUpdatedGlobalStatisticsItem();
 
-    return { mow: item, globalStatistics: updatedGlobalStatistics };
+    await dynamodb.send(new TransactWriteCommand({
+        TransactItems: [
+            {
+                Put: {
+                    TableName: TABLE_NAME,
+                    Item: mow
+                }
+            }, 
+            {
+                Put: {
+                    TableName: TABLE_NAME,
+                    Item: globalStatistics
+                }
+            }
+        ]}
+    ));
+
+    return { mow, globalStatistics };
 };
 
-const updateGlobalStatistics = async (mostRecentItem: MowEvent): Promise<GlobalStatistics> => {
+const getUpdatedGlobalStatisticsItem = async (): Promise<GlobalStatistics> => {
     const { Item } = await dynamodb.send(new GetCommand({
         TableName: TABLE_NAME,
         Key: {
@@ -76,7 +89,7 @@ const updateGlobalStatistics = async (mostRecentItem: MowEvent): Promise<GlobalS
 
     const { total, dayOfMonthRaw, dayOfWeekRaw } = Item as GlobalStatistics;
 
-    const timestamp = new Date(mostRecentItem.timestamp);
+    const timestamp = new Date();
     const dayOfWeek = timestamp.getDay();
     const dayOfMonth = timestamp.getDate();
     const newTotal = total + 1
@@ -96,10 +109,7 @@ const updateGlobalStatistics = async (mostRecentItem: MowEvent): Promise<GlobalS
         dayOfWeekRaw: newDayOfWeekRaw,
         dayOfMonthRaw: newDayOfMonthRaw
     };
-    await dynamodb.send(new PutCommand({
-        TableName: TABLE_NAME,
-        Item: item
-    }));
+    
     return item;
 };
 
