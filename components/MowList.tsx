@@ -38,7 +38,7 @@ const MowList: React.FC = () => {
     return (
         <Segment>
             <Header content="Mow History" />
-            <List celled>
+            <List divided>
                 {mows.map((mow) => (
                     <List.Item key={mow.SK}>
                         <List.Content>
