@@ -110,11 +110,12 @@ const getUpdatedGlobalStatisticsItem = async (): Promise<GlobalStatistics> => {
         }
     }));
 
-    const { total, dayOfMonthRaw, dayOfWeekRaw } = Item as GlobalStatistics;
+    const { total, dayOfMonthRaw, dayOfWeekRaw, monthOfYearRaw } = Item as GlobalStatistics;
 
     const timestamp = new Date();
     const dayOfWeek = timestamp.getDay();
     const dayOfMonth = timestamp.getDate();
+    const monthOfYear = timestamp.getMonth();
     const newTotal = total + 1
 
     const newDayOfMonthRaw = [...dayOfMonthRaw];
@@ -123,6 +124,9 @@ const getUpdatedGlobalStatisticsItem = async (): Promise<GlobalStatistics> => {
     const newDayOfWeekRaw = [...dayOfWeekRaw];
     newDayOfWeekRaw[dayOfWeek] += 1;
 
+    const newMonthOfYearRaw = [...monthOfYearRaw];
+    newMonthOfYearRaw[monthOfYear] += 1;
+
     const item: GlobalStatistics = {
         PK: "GLOBAL#STATISTICS",
         SK: "GLOBAL#STATISTICS",
@@ -130,7 +134,8 @@ const getUpdatedGlobalStatisticsItem = async (): Promise<GlobalStatistics> => {
         Type: "STATISTICS",
         total: newTotal,
         dayOfWeekRaw: newDayOfWeekRaw,
-        dayOfMonthRaw: newDayOfMonthRaw
+        dayOfMonthRaw: newDayOfMonthRaw,
+        monthOfYearRaw: newMonthOfYearRaw
     };
     
     return item;

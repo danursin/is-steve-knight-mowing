@@ -1,4 +1,4 @@
-import { Button, Header, Icon, List, Segment } from "semantic-ui-react";
+import { Button, Header, Icon, List, Placeholder, Segment } from "semantic-ui-react";
 import React, { useCallback, useEffect, useState } from "react";
 
 import { MowEvent } from "../types";
@@ -38,8 +38,9 @@ const MowList: React.FC = () => {
     return (
         <Segment>
             <Header content="Mow History" />
-            {loading && !mows.length && <Icon name="spinner" loading />}
+
             <List>
+                {mows.length === 0 && <List.Item content={<Placeholder />} />}
                 {mows.map((mow) => (
                     <List.Item key={mow.SK}>
                         <List.Content>

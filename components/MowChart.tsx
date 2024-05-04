@@ -12,9 +12,10 @@ interface MowChartProps {
 const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
     const [dayOfWeekChartProps, setDayOfWeekChartProps] = useState<Highcharts.Options>();
     const [dayOfMonthChartProps, setDayOfMonthChartProps] = useState<Highcharts.Options>();
+    const [monthOfYearChartProps, setMonthOfYearChartProps] = useState<Highcharts.Options>();
 
     useEffect(() => {
-        const { dayOfWeekRaw, dayOfMonthRaw } = globalStatistics;
+        const { dayOfWeekRaw, dayOfMonthRaw, monthOfYearRaw } = globalStatistics;
 
         let maxDayOfWeek = 0;
         for (const val of dayOfWeekRaw) {
@@ -27,6 +28,13 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
         for (const val of dayOfMonthRaw) {
             if (val > maxDayOfMonth) {
                 maxDayOfMonth = val;
+            }
+        }
+
+        let maxMonthOfYear = 0;
+        for (const val of monthOfYearRaw) {
+            if (val > maxMonthOfYear) {
+                maxMonthOfYear = val;
             }
         }
 
@@ -65,6 +73,55 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
             }
         };
         setDayOfWeekChartProps(dayOfWeekOptions);
+
+        const monthOfYearOptions: Highcharts.Options = {
+            chart: {
+                type: "column",
+                height: "200px"
+            },
+            title: {
+                text: undefined
+            },
+            legend: { enabled: false },
+            xAxis: {
+                categories: [
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December"
+                ],
+                title: {
+                    text: "Month of Year"
+                }
+            },
+            yAxis: {
+                title: {
+                    text: "Count"
+                },
+                tickInterval: 1,
+                max: maxMonthOfYear
+            },
+            series: [
+                {
+                    name: "Observed Mow Count",
+                    type: "column",
+                    data: monthOfYearRaw, // Counts on the y-axis
+                    color: "green"
+                }
+            ],
+            credits: {
+                enabled: false
+            }
+        };
+        setMonthOfYearChartProps(monthOfYearOptions);
 
         const dayOfMonthOptions: Highcharts.Options = {
             chart: {
@@ -108,6 +165,7 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
             <Header content={`${globalStatistics.total} mows recorded all-time`} />
             <HighchartsReact highcharts={Highcharts} options={dayOfWeekChartProps} />
             <HighchartsReact highcharts={Highcharts} options={dayOfMonthChartProps} />
+            <HighchartsReact highcharts={Highcharts} options={monthOfYearChartProps} />
         </Segment>
     );
 };
