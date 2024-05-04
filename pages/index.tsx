@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import MostRecentMow from "../components/MostRecentMow";
 import MowChart from "../components/MowChart";
+import MowList from "../components/MowList";
 import SimpleLoader from "../components/SimpleLoader";
 import SteveKnightExplanation from "../components/SteveKnightExplanation";
 import SubmitMowEvent from "../components/SubmitMowEvent";
@@ -64,6 +65,9 @@ const Home: React.FC = () => {
                 <Grid.Column>{globalStatistics ? <MowChart globalStatistics={globalStatistics} /> : <SimpleLoader />}</Grid.Column>
                 <Grid.Column>
                     <SubmitMowEvent onSave={handleOnSave} />
+                </Grid.Column>
+                <Grid.Column>
+                    <MowList />
                 </Grid.Column>
             </Grid>
         </Layout>

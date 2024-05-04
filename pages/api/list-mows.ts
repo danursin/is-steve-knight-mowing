@@ -1,17 +1,20 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { MowEvent } from "../../types";
-import { getMows } from "../../services/mowService";
+import { listMowsDescending } from "../../services/mowService";
 
 type ListMowsQueryParams = {
-    start_date: string;
-    end_date: string
+    take: string;
+    last_key: string | undefined;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<MowEvent[] | string>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<{
+    items: MowEvent[];
+    last_evaluated_key: string | undefined;
+} | string>) {
     try {
-        const { start_date, end_date } = req.query as ListMowsQueryParams;
-        const mows = await getMows({ start_date, end_date })
+        const { take, last_key } = req.query as ListMowsQueryParams;
+        const mows = await listMowsDescending({ take: +take, last_key })
         res.json(mows);
     } catch(err){
         res.status(500).send((err as Error).message);

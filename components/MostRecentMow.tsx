@@ -2,7 +2,6 @@ import { Header, Statistic } from "semantic-ui-react";
 import React, { useEffect, useState } from "react";
 
 import { MowEvent } from "../types";
-import ms from "ms";
 
 interface MostRecentMowProps {
     mow: MowEvent | undefined;

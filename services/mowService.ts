@@ -19,6 +19,29 @@ export const getMows = async ({ start_date, end_date }: { start_date: string; en
     return (Items ?? []) as MowEvent[];
 };
 
+export const listMowsDescending = async ({ take, last_key }: { take: number; last_key?: string }): Promise<{ items: MowEvent[]; last_evaluated_key: string | undefined }> => {
+    const result = await dynamodb.send(new QueryCommand({
+        TableName: TABLE_NAME,
+        KeyConditionExpression: "#PK = :pk",
+        ExpressionAttributeNames: {
+            "#PK": "PK"
+        },
+        ExpressionAttributeValues: {
+            ":pk": "EVENT#MOW"
+        },
+        ScanIndexForward: false,
+        Limit: take,
+        ExclusiveStartKey: last_key ? {
+            PK: "EVENT#MOW",
+            SK: last_key
+        }: undefined
+    }));
+    return {
+        items: (result.Items ?? []) as MowEvent[],
+        last_evaluated_key: (result.LastEvaluatedKey as Pick<MowEvent, "PK" | "SK">)?.SK ?? undefined
+    }
+};
+
 export const getMostRecentMow = async (): Promise<MowEvent> => {
     const { Items } = await dynamodb.send(new QueryCommand({
         TableName: TABLE_NAME,
