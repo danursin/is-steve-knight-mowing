@@ -38,6 +38,7 @@ const MowList: React.FC = () => {
     return (
         <Segment>
             <Header content="Mow History" />
+            {loading && !mows.length && <Icon name="spinner" loading />}
             <List>
                 {mows.map((mow) => (
                     <List.Item key={mow.SK}>
