@@ -105,11 +105,19 @@ const getUpdatedGlobalStatisticsItem = async (): Promise<GlobalStatistics> => {
 
     const { total, dayOfMonthRaw, dayOfWeekRaw, monthOfYearRaw, hourOfDayRaw } = await getGlobalStatistics();
 
-    const timestamp = new Date();
+    const timestamp = new Date(new Date().toLocaleString('en-US', { 
+        timeZone: "America/Chicago", 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+    }));
     const dayOfWeek = timestamp.getDay();
     const dayOfMonth = timestamp.getDate();
     const monthOfYear = timestamp.getMonth();
-    const hourOfDay = timestamp.toLocaleTimeString('en-US', { timeZone: "America/Chicago", hour: "2-digit", hour12: false }).split(':')[0];
+    const hourOfDay = timestamp.getHours();
     const newTotal = total + 1
 
     const newDayOfMonthRaw = [...dayOfMonthRaw];
@@ -122,7 +130,7 @@ const getUpdatedGlobalStatisticsItem = async (): Promise<GlobalStatistics> => {
     newMonthOfYearRaw[monthOfYear] += 1;
 
     const newHourOfDayRaw = [...hourOfDayRaw];
-    newHourOfDayRaw[parseInt(hourOfDay)] += 1;
+    newHourOfDayRaw[hourOfDay] += 1;
 
     const item: GlobalStatistics = {
         PK: "GLOBAL#STATISTICS",
