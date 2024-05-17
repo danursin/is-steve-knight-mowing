@@ -40,7 +40,17 @@ const MowList: React.FC = () => {
             <Header content="Mow History" />
 
             <List>
-                {mows.length === 0 && <List.Item content={<Placeholder />} />}
+                {mows.length === 0 && (
+                    <List.Item
+                        content={
+                            <Placeholder>
+                                <Placeholder.Line />
+                                <Placeholder.Line />
+                                <Placeholder.Line />
+                            </Placeholder>
+                        }
+                    />
+                )}
                 {mows.map((mow) => (
                     <List.Item key={mow.SK}>
                         <List.Content>

@@ -102,20 +102,14 @@ export const createMow = async ({geolocation, note }: { geolocation: Partial<Geo
 };
 
 const getUpdatedGlobalStatisticsItem = async (): Promise<GlobalStatistics> => {
-    const { Item } = await dynamodb.send(new GetCommand({
-        TableName: TABLE_NAME,
-        Key: {
-            PK: "GLOBAL#STATISTICS",
-            SK: "GLOBAL#STATISTICS"
-        }
-    }));
 
-    const { total, dayOfMonthRaw, dayOfWeekRaw, monthOfYearRaw } = Item as GlobalStatistics;
+    const { total, dayOfMonthRaw, dayOfWeekRaw, monthOfYearRaw, hourOfDayRaw } = await getGlobalStatistics();
 
     const timestamp = new Date();
     const dayOfWeek = timestamp.getDay();
     const dayOfMonth = timestamp.getDate();
     const monthOfYear = timestamp.getMonth();
+    const hourOfDay = timestamp.toLocaleTimeString('en-US', { timeZone: "America/Chicago", hour: "2-digit", hour12: false }).split(':')[0];
     const newTotal = total + 1
 
     const newDayOfMonthRaw = [...dayOfMonthRaw];
@@ -127,6 +121,9 @@ const getUpdatedGlobalStatisticsItem = async (): Promise<GlobalStatistics> => {
     const newMonthOfYearRaw = [...monthOfYearRaw];
     newMonthOfYearRaw[monthOfYear] += 1;
 
+    const newHourOfDayRaw = [...hourOfDayRaw];
+    newHourOfDayRaw[parseInt(hourOfDay)] += 1;
+
     const item: GlobalStatistics = {
         PK: "GLOBAL#STATISTICS",
         SK: "GLOBAL#STATISTICS",
@@ -135,7 +132,8 @@ const getUpdatedGlobalStatisticsItem = async (): Promise<GlobalStatistics> => {
         total: newTotal,
         dayOfWeekRaw: newDayOfWeekRaw,
         dayOfMonthRaw: newDayOfMonthRaw,
-        monthOfYearRaw: newMonthOfYearRaw
+        monthOfYearRaw: newMonthOfYearRaw,
+        hourOfDayRaw: newHourOfDayRaw
     };
     
     return item;

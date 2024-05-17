@@ -31,4 +31,6 @@ export interface GlobalStatistics extends DynamoDbItem {
     dayOfMonthRaw: number[];
     /** All-time groupings of events by month of year, zero-indexed so January is in index 0, December is in index 11. */
     monthOfYearRaw: number[];
+    /** All-time groupings of events by hour of the day, in US Central Time, zero-indexed. */
+    hourOfDayRaw: number[];
 }

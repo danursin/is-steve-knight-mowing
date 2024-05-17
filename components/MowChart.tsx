@@ -13,9 +13,10 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
     const [dayOfWeekChartProps, setDayOfWeekChartProps] = useState<Highcharts.Options>();
     const [dayOfMonthChartProps, setDayOfMonthChartProps] = useState<Highcharts.Options>();
     const [monthOfYearChartProps, setMonthOfYearChartProps] = useState<Highcharts.Options>();
+    const [hourOfDayChartProps, setHourOfDayChartProps] = useState<Highcharts.Options>();
 
     useEffect(() => {
-        const { dayOfWeekRaw, dayOfMonthRaw, monthOfYearRaw } = globalStatistics;
+        const { dayOfWeekRaw, dayOfMonthRaw, monthOfYearRaw, hourOfDayRaw } = globalStatistics;
 
         let maxDayOfWeek = 0;
         for (const val of dayOfWeekRaw) {
@@ -35,6 +36,13 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
         for (const val of monthOfYearRaw) {
             if (val > maxMonthOfYear) {
                 maxMonthOfYear = val;
+            }
+        }
+
+        let maxHourOfDay = 0;
+        for (const val of hourOfDayRaw) {
+            if (val > maxHourOfDay) {
+                maxHourOfDay = val;
             }
         }
 
@@ -158,6 +166,53 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
             }
         };
         setDayOfMonthChartProps(dayOfMonthOptions);
+
+        const hourOfDayOptions: Highcharts.Options = {
+            chart: {
+                type: "column",
+                height: "200px"
+            },
+            legend: { enabled: false },
+            title: {
+                text: undefined
+            },
+            xAxis: {
+                categories: hourOfDayRaw.map((_, index) => {
+                    if (index === 0) {
+                        return "12 AM";
+                    }
+                    if (index === 12) {
+                        return "12 PM";
+                    }
+                    if (index < 12) {
+                        return `${index} AM`;
+                    }
+                    return `${index - 12} PM`;
+                }),
+                title: {
+                    text: "Hour of Day"
+                }
+            },
+            yAxis: {
+                title: {
+                    text: "Count"
+                },
+                tickInterval: 1,
+                max: maxHourOfDay
+            },
+            series: [
+                {
+                    name: "Observed Mow Count",
+                    type: "column",
+                    data: hourOfDayRaw, // Counts on the y-axis
+                    color: "green"
+                }
+            ],
+            credits: {
+                enabled: false
+            }
+        };
+        setHourOfDayChartProps(hourOfDayOptions);
     }, [globalStatistics]);
 
     return (
@@ -166,6 +221,7 @@ const MowChart: React.FC<MowChartProps> = ({ globalStatistics }) => {
             <HighchartsReact highcharts={Highcharts} options={dayOfWeekChartProps} />
             <HighchartsReact highcharts={Highcharts} options={dayOfMonthChartProps} />
             <HighchartsReact highcharts={Highcharts} options={monthOfYearChartProps} />
+            <HighchartsReact highcharts={Highcharts} options={hourOfDayChartProps} />
         </Segment>
     );
 };
